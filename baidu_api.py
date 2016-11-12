@@ -87,8 +87,7 @@ def IDCard(value):
 
 def Card(value):
     url='http://apis.baidu.com/datatiny/cardinfo/cardinfo'
-    #payload={'cardnum':value}
-    payload={'cardnum':'130123198801163072'}
+    payload={'cardnum':value}
     r=requests.get(url,params=payload,headers=headers)
     try:
         s=r.json()
