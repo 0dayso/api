@@ -45,7 +45,7 @@ def build_headers(access_key, secret_key, path, get_params={}, post_params={}):
     headers['X-Auth-Access-Key'] = access_key
     headers['X-Auth-Timestamp'] = str(int(time.time()))
     headers['X-Auth-Signature-Method'] = 'HMAC-SHA1'
-    headers['X-Auth-Nonce'] = randstr(32)#utils.randstr(32)
+    headers['X-Auth-Nonce'] = randstr(32)
     all_params = {}
     all_params.update(get_params)
     all_params.update(post_params)
@@ -56,12 +56,11 @@ def build_headers(access_key, secret_key, path, get_params={}, post_params={}):
     return headers
 
 method = 'post'
-ak = '1d64b74d9284465f936e9ae733a561d7'#your_access_key
-sk = 'adb5ab4432dc414d8fd1061ee20b96a6'#your_secret_key
+ak = 'd7a559051ee0456f9397f78c0b90d747'     #your_access_key
+sk = 'd7a559051ee0456f9397f78c0b90d747'     #your_secret_key
 url = 'https://api.su.baidu.com/v3/yjs/zones/'
 path = 'zones'
 get_params = {}
-#post_params = {"auth_userid": "5y1sesn8ph"}
 post_params = {"X-User-Id": "5y1sesn8ph",
                "domain": "yjwc.com",
                "type": "ns",
