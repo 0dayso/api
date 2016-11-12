@@ -1,79 +1,148 @@
 # coding=utf-8
 '''
-Created on 2016年6月20日
+Created on 2016年6月1日
 @author: lyxw
 '''
 
-import base64
 import requests
-import json
-import time
-import hmac
-import hashlib
-from randstr import randstr
 
-def build_sign(secret_key, params):
-    '''
-    通过HMAC-SHA1构造签名串
-    Args:
-        secret_key: HMAC-SHA1所使用的key
-        params: 待签名的参数dict
-    '''
+def APIKEY():
+    apikey='*********************'       #your baidu apikey
+    return apikey
+
+headers={'apikey':APIKEY()}
+
+def Phone(value):
+    url='http://apis.baidu.com/apistore/mobilenumber/mobilenumber'
+    payload={'phone':value}
+    r=requests.get(url,params=payload,headers=headers)
     try:
-        ks = params.keys()
-        ks.sort()
-        base_str = '&'.join(['%s=%s' % (k, str(params[k])) for k in ks])
-        return base64.b64encode(hmac.new(str(secret_key), base_str, hashlib.sha1).digest())
-    except Exception as e:
-        import traceback
-        print traceback.format_exc()
-        return None
+        s=r.json()
+        print s['retMsg']
+        print '手机号码: '+s['retData']['phone']
+        print '类型: '+s['retData']['suit']
+        print '手机号前7位: '+s['retData']['prefix']
+        print '运营商: '+s['retData']['supplier']
+        print '省份: '+s['retData']['province']
+        print '城市: '+s['retData']['city'] 
+    except:
+        pass
+    
+def IP(value):
+    url='http://apis.baidu.com/apistore/iplookupservice/iplookup'
+    payload={'ip':value}
+    r=requests.get(url,params=payload,headers=headers)
+    try:
+        s=r.json()
+        print s['errMsg']
+        print 'ip地址: '+s['retData']['ip']
+        print '国家: '+s['retData']['country']
+        print '省份: '+s['retData']['province']
+        print '城市: '+s['retData']['city']
+        print '地区: '+s['retData']['district']
+        print '运营商: '+s['retData']['carrier']
+    except:
+        pass
 
-def build_headers(access_key, secret_key, path, get_params={}, post_params={}):
-    '''
-    根据请求参数构建包含鉴权参数的请求Header
-    Args:
-        access_key: ak
-        secret_key: sk
-        get_params: 业务相关的GET参数
-        post_params: 业务相关的POST参数
-        view_params: url中的restful参数
-    Returns:
-        params: 添加了鉴权相关参数，并且签名过的参数
-    '''
-    headers = {}
-    headers['X-Auth-Access-Key'] = access_key
-    headers['X-Auth-Timestamp'] = str(int(time.time()))
-    headers['X-Auth-Signature-Method'] = 'HMAC-SHA1'
-    headers['X-Auth-Nonce'] = randstr(32)
-    all_params = {}
-    all_params.update(get_params)
-    all_params.update(post_params)
-    all_params.update(headers)
-    all_params['X-Auth-Path-Info'] = path.strip('/')
-    auth_sign = build_sign(secret_key, all_params)
-    headers['X-Auth-Sign'] = auth_sign
-    return headers
+def IP_info(value):
+    url='http://apis.baidu.com/bdyunfenxi/intelligence/ip'
+    payload={'ip':value}
+    r=requests.get(url,params=payload,headers=headers)
+    try:
+        s=r.json()
+        print s['Description']
+        print 'ip地址: '.encode('gbk')+value
+        print '国家: '+s['Base_info']['country']
+        print '省份: '+s['Base_info']['province']
+        print '城市: '+s['Base_info']['city']
+        print '地区: '+s['Base_info']['county']
+        print '运营商: '+s['Base_info']['isp']
+        if s['Net_info']:
+            if s['Net_info']['Is_ntp']==1:
+                print 'ntp端口号: '+s['Net_info']['Ntp_port']
+            if s['Net_info']['Is_dns']==1:
+                print 'ntp端口号: '+s['Net_info']['Dns_port']
+            if s['Net_info']['Is_proxy']==1:
+                print 'ntp端口号: '+s['Net_info']['Proxy_port']
+            if s['Net_info']['Is_vpn']==1:
+                print 'ntp端口号: '+s['Net_info']['Vpn_port'] 
+    except:
+        pass
 
-method = 'post'
-ak = 'd7a559051ee0456f9397f78c0b90d747'     #your_access_key
-sk = 'd7a559051ee0456f9397f78c0b90d747'     #your_secret_key
-url = 'https://api.su.baidu.com/v3/yjs/zones/'
-path = 'zones'
-get_params = {}
-post_params = {"X-User-Id": "5y1sesn8ph",
-               "domain": "yjwc.com",
-               "type": "ns",
-               "plan_bd": "free"}
-headers = build_headers(ak, sk, path, get_params, post_params)
-'''
-     headers = {
-    'X-Auth-Access-Key': 'd7a559051ee0456f9397f78c0b90d747',
-    'X-Auth-Signature-Method': 'HMAC-SHA1',
-    'X-Auth-Sign': 'Xi8JGn7gFTAWw/8oGibC0vioqMk=',
-    'X-Auth-Nonce': 'eq2d8qosy5nape7r13qhaykotrsgq0r6',
-    'X-Auth-Timestamp': '1413440640'}
-'''
-resp = requests.request(method, url, params=get_params, data=post_params, headers=headers)
-print resp
-data = json.loads(resp.text)
+def IDCard(value):
+    url='http://apis.baidu.com/chazhao/idcard/idcard'
+    payload={'idcard':value}
+    r=requests.get(url,params=payload,headers=headers)
+    try:
+        s=r.json()
+        print s['msg']
+        print '身份证号码: '+s['data']['idcard']
+        print '性别: '+s['data']['gender']
+        print '生日: '+s['data']['birthday']
+        print '生肖: '+s['data']['zodiac']
+        print '星座: '+s['data']['constellation']
+        print '身份证归属地: '+s['data']['address']
+    except:
+        pass
+
+def Card(value):
+    url='http://apis.baidu.com/datatiny/cardinfo/cardinfo'
+    #payload={'cardnum':value}
+    payload={'cardnum':'130123198801163072'}
+    r=requests.get(url,params=payload,headers=headers)
+    try:
+        s=r.json()
+        print s
+        print '归属银行: '+s['data']['bankname']
+        print '银行卡类型: '+s['data']['cardtype']
+        print '银行卡名称: '+s['data']['cardname']
+        print '银行卡前缀: '+s['data']['cardprefixnum']
+        print '内部结算代码: '+s['data']['banknum']
+        print '银行卡长度: '+s['data']['cardlength']
+        #print s['retMsg']
+        print s['data']['mess']
+    except:
+        pass  
+
+def Wooyun(value):
+    url='http://apis.baidu.com/apistore/wooyun/unclaim'
+    payload={'limit':value}
+    r=requests.get(url,params=payload,headers=headers)
+    try:
+        s=r.json()
+        #print s
+        for i in range(0,value):
+            print i
+            print '漏洞编号： '+s[i]['id']
+            print '漏洞标题: '+s[i]['title']
+            print '漏洞作者: '+s[i]['author']
+            if s[i]['status']==0:
+                print '漏洞状态: 待厂商确认处理'.encode('gbk')
+            elif s[i]['status']==1:
+                print '漏洞状态: 厂商已经确认'.encode('gbk')
+            elif s[i]['status']==2:
+                print '漏洞状态: 漏洞通知厂商但厂商忽略'.encode('gbk')
+            elif s[i]['status']==3:
+                print '漏洞状态: 未联系到厂商或厂商忽略'.encode('gbk')
+            else:
+                print '漏洞状态: 正在联系厂商并等待认领'.encode('gbk')
+            print '用户定义危害等级: '+s[i]['user_harmlevel']
+            print '厂商定义危害等级: '+s[i]['corp_harmlevel']
+            print 'rank: '+s[i]['corp_rank']
+            print '评论数：  '+s[i]['comment']
+            print '发布日期：  '+s[i]['data']
+            print '发布时间戳： '+s['timestamp']
+            print '漏洞链接： '+s[i]['link']
+    except:
+        pass
+
+def Md5(value):
+    url='http://apis.baidu.com/chazhao/md5decod/md5decod'
+    payload={'md5':value}
+    r=requests.get(url,params=payload,headers=headers)
+    try:
+        s=r.json()
+        print 'md5: '+s['data']['md5']
+        print 'md5_src: '+s['data']['md5_src']
+    except:
+        pass  
